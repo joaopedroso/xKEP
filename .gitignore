@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[oc]
+.venv/
+
+# Generated instances (regenerate with gen_data.sh)
+DATA/
+
+# OS / editors
+.DS_Store
+.idea/
+*~
