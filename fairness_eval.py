@@ -3,14 +3,14 @@ Fairness analysis of the minimum-survival-time filter (Section 7.6 of the paper)
 
 For each alpha=0 instance: train the HGB regressor exactly as kep_solve.py
 does, predict survival for every compatible arc, and for each threshold S
-compute which patients remain *reachable* (at least one incoming arc with
-predicted survival >= S).  Retention rates are reported by patient
+compute which patients have *donor access* (at least one incoming arc with
+predicted survival >= S).  Donor-access rates are reported by patient
 sensitisation group (PRA 5/45/90, read from the .pra.gz side files) and by
 the number of homozygous HLA-B/DR loci of the patient (homozygous patients
 present fewer antigens, so donor antigens are more often foreign, raising
 the LKDPI mismatch term and hence lowering predicted survival).
 
-Writes RESULTS/fairness_pra.png and prints the retention table used in the
+Writes RESULTS/fairness_pra.png and prints the donor-access table used in the
 paper.  Run time: ~1 minute (10 HGB fits).
 """
 import numpy as np
@@ -77,7 +77,7 @@ def main():
         sub = df[df.homoz == h]
         print(f"  homoz {h}: n={len(sub):4d}  reachable={sub.reachable.mean():.1%}")
 
-    print("\nRetention (fraction of patients with >=1 incoming arc with "
+    print("\nDonor access (fraction of patients with >=1 incoming arc with "
           "predicted survival >= S):")
     header = "S    " + "".join(f"PRA{g:<5}" for g in PRA_GROUPS) \
              + "".join(f"hom{h:<5}" for h in [0, 1, 2]) + "all"
@@ -108,7 +108,7 @@ def main():
                      color=colors[g], label=f"PRA = {g}")
     axes[0].plot(MST_VALUES, ret_all, color="k", ls="--", lw=1, label="all patients")
     axes[0].set_xlabel("minimum survival threshold $S$ (years)")
-    axes[0].set_ylabel("fraction of patients retained")
+    axes[0].set_ylabel("fraction of patients with donor access")
     axes[0].set_title("by sensitisation (PRA)")
     axes[0].legend()
     axes[0].grid(alpha=0.3)
